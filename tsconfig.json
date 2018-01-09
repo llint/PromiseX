@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "outDir": "dst",
+        "declaration": true,
+        "sourceMap": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
