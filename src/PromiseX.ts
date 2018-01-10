@@ -1,6 +1,4 @@
-// the reason that a generic type is not used is that T is too rigid in terms of type conversion
-// type erasure as provided by any simplifies a lot of the potential issues, and really we don't care the actual type of the value
-export class PromiseX<T> {
+export class PromiseX<T = any> {
     private _value: T;
     private _continuation: (x: T) => void;
 

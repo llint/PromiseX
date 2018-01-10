@@ -38,3 +38,8 @@ p.then(console.log)
 
 var p2 = new PromiseX();
 p2.then(ComputeAsyncX);
+
+// var x: {} = "1337+++";
+// console.log(x);
+
+// var i: number = x;
