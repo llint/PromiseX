@@ -39,5 +39,3 @@ export class PromiseX<T = any> {
         return p;
     }
 }
-
-// export class PromiseX extends PromiseX<any> {}
