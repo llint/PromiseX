@@ -4,9 +4,18 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "Launch Program",
+            "name": "Launch: node",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/Test.ts",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/dst/*.js"
+            ]
+        },
+        {
+            "name": "Launch: ts-node",
             "type": "node",
             "request": "launch",
             "args": ["${workspaceFolder}/src/Test.ts"],

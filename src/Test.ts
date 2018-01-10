@@ -4,7 +4,7 @@ console.log("hello TypeScript!");
 
 setTimeout(console.log, 1000, "xxxxxx");
 
-function ComputeAsyncX(x: number) : PromiseX {
+function ComputeAsyncX(x: number) : PromiseX<number> {
     return new PromiseX(resolve => setTimeout(resolve, 1000, x + 1));
 }
 
@@ -35,3 +35,6 @@ p.then(console.log)
     .then(x => 999)
     .then(console.log)
     ;
+
+var p2 = new PromiseX();
+p2.then(ComputeAsyncX);
