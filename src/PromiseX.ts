@@ -1,39 +1,39 @@
 export class PromiseX<T = any> {
-    private _value: T;
+    private _result: T;
     private _continuations: ((x: T) => void)[] = [];
 
     constructor(executor?: (resolve: (x: T) => void) => void) {
         if (executor) {
-            executor(value => this.setValue(value)); // NB: cannot pass this.setValue directly!
+            executor(value => this.setResult(value)); // NB: cannot pass this.setValue directly!
         }
     }
 
-    public setValue(value: T): void {
-        if (this._value == null && value != null) { // 'null' or 'undefined'
-            this._value = value;
+    public setResult(result: T): void {
+        if (this._result == null && result != null) { // 'null' or 'undefined'
+            this._result = result;
             for (let continuation of this._continuations) {
-                continuation(this._value);
+                continuation(this._result);
             }
         }
     }
 
     public then(continuation: (x: T) => PromiseX<T> | T | void): PromiseX<T> {
-        if (this._value != null) {
-            let r = continuation(this._value);
+        if (this._result != null) {
+            let r = continuation(this._result);
             if (r instanceof PromiseX) {
                 return r;
             }
             let p = new PromiseX<T>();
-            p.setValue(r != null ? r as T : this._value);
+            p.setResult(r != null ? r as T : this._result);
             return p;
         }
         let p = new PromiseX<T>();
         this._continuations.push(value => {
             let r = continuation(value);
             if (r instanceof PromiseX) {
-                r.then(x => p.setValue(x));
+                r.then(x => p.setResult(x));
             } else {
-                p.setValue(r != null ? r as T : this._value);
+                p.setResult(r != null ? r as T : this._result);
             }
         });
         return p;

@@ -26,7 +26,7 @@ ComputeAsyncX(0)
     ;
 
 var p = new PromiseX();
-p.setValue(42);
+p.setResult(42);
 p.then(console.log)
     .then(v => "xyz")
     .then(console.log)
@@ -39,7 +39,7 @@ p.then(console.log)
 var p2 = new PromiseX();
 p2.then(ComputeAsyncX).then(console.log);
 p2.then(ComputeAsyncX).then(console.log);
-p2.setValue(2000);
+p2.setResult(2000);
 p2.then(ComputeAsyncX).then(console.log);
 p2.then(ComputeAsyncX).then(console.log);
 
