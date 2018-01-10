@@ -4,7 +4,7 @@ export class PromiseX<T = any> {
 
     constructor(executor?: (resolve: (x: T) => void) => void) {
         if (executor) {
-            executor(value => this.setResult(value)); // NB: cannot pass this.setValue directly!
+            executor(result => this.setResult(result)); // NB: cannot pass this.setResult directly!
         }
     }
 
@@ -28,8 +28,8 @@ export class PromiseX<T = any> {
             return p;
         }
         let p = new PromiseX<T>();
-        this._continuations.push(value => {
-            let r = continuation(value);
+        this._continuations.push(result => {
+            let r = continuation(result);
             if (r instanceof PromiseX) {
                 r.then(x => p.setResult(x));
             } else {
