@@ -6,12 +6,12 @@ export class PromiseX {
 
     constructor(executor?: (resolve: (x: any) => void) => void) {
         if (executor) {
-            executor(this.setValue);
+            executor(value => this.setValue(value)); // NB: cannot pass this.setValue directly!
         }
     }
 
     public setValue(value: any): void {
-        if (this._value == null) { // 'null' or 'undefined'
+        if (this._value == null && value != null) { // 'null' or 'undefined'
             this._value = value;
             if (this._continuation) {
                 this._continuation(this._value);
