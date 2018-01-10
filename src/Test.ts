@@ -37,7 +37,15 @@ p.then(console.log)
     ;
 
 var p2 = new PromiseX();
-p2.then(ComputeAsyncX);
+p2.then(ComputeAsyncX).then(console.log);
+p2.then(ComputeAsyncX).then(console.log);
+p2.setValue(2000);
+p2.then(ComputeAsyncX).then(console.log);
+p2.then(ComputeAsyncX).then(console.log);
+
+var a : any[] = [];
+a.push(1, "hello", true);
+console.log(a);
 
 // var x: {} = "1337+++";
 // console.log(x);
