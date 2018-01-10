@@ -6,13 +6,16 @@
     "configurations": [
 
         {
+            "name": "Launch Program",
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/dst/PromiseX.js",
-            "outFiles": [
-                "${workspaceFolder}/dst/*.js"
-            ]
+            "args": ["${workspaceFolder}/src/Test.ts"],
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "ts-node/register"
+            ],
+            "sourceMaps": true,
         }
     ]
 }

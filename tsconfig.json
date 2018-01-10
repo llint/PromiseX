@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
+        "module": "commonjs",
         "outDir": "dst",
         "declaration": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "watch": true
     },
     "include": [
         "src/**/*"
