@@ -56,12 +56,17 @@ export class PromiseX<T = any> implements PromiseLike<T> {
             }
 
             case State.Rejected: {
-                let r = onRejected ? onRejected(this._reason) : undefined;
-                if (isPromiseLike(r)) {
-                    return r;
+                if (onRejected) {
+                    let r = onRejected(this._reason);
+                    if (isPromiseLike(r)) {
+                        return r;
+                    }
+                    let p = new PromiseX<TResult2>();
+                    p.setResult(r); // NB: the error has been handled, we pass along the handled result
+                    return p;
                 }
                 let p = new PromiseX<TResult2>();
-                p.setError(r);
+                p.setError(this._reason); // NB: the error is not handled, mark the returned promise to be the same error, so it can be passed along until handled
                 return p;
             }
 
@@ -77,11 +82,15 @@ export class PromiseX<T = any> implements PromiseLike<T> {
                         }
                     },
                     reason => {
-                        let r = onRejected ? onRejected(reason) : undefined;
-                        if (isPromiseLike(r)) {
-                            r.then(x => p.setError(x));
+                        if (onRejected) {
+                            let r = onRejected(reason);
+                            if (isPromiseLike(r)) {
+                                r.then(x => p.setResult(x)); // NB: since the error is handled, the result from the error handler is passed along
+                            } else {
+                                p.setResult(r); // NB: the error is handled, so the promised returned would be signaled with whatever result from the error handler
+                            }
                         } else {
-                            p.setError(r);
+                            p.setError(reason); // NB: pass the error along the chain
                         }
                     }
                 ]);
