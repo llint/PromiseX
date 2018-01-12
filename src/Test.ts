@@ -62,10 +62,10 @@ Test3();
 function Test4() {
     let p = new PromiseX();
     p.then(ComputeAsyncX).then(console.log, console.error).then(() => console.log("done 1"));
-    p.then(ComputeAsyncX).then(console.log).then(undefined, ComputeAsyncX).then((x) => console.log("### AFTER ERROR: done 2: " + x), console.error);
+    p.then(ComputeAsyncX).then(console.log).catch(ComputeAsyncX).then((x) => console.log("### AFTER ERROR: done 2: " + x), console.error);
     p.setError("ERROR");
     p.then(ComputeAsyncX).then(console.log, console.error).then(() => console.log("done 3"));
-    p.then(ComputeAsyncX).then(console.log).then(undefined, undefined).then(undefined, () => console.error("ERROR 4"));
+    p.then(ComputeAsyncX).then(console.log).then(undefined, undefined).catch(() => console.error("ERROR 4"));
 }
 Test4();
 

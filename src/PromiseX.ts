@@ -2,9 +2,16 @@ function isPromiseLike<T>(x: any): x is PromiseLike<T> {
     return x != null && (<PromiseLike<T>>x).then != undefined;
 }
 
+function isPromiseX<T>(x: PromiseLike<T>): x is PromiseX<T> {
+    return x != null && (<PromiseX<T>>x).type == PromiseX.symbolPromiseX;
+}
+
 enum State { Pending, Fulfilled, Rejected }
 
 export class PromiseX<T = any> implements PromiseLike<T> {
+    static symbolPromiseX: symbol = Symbol('PromiseX');
+    readonly type: symbol = PromiseX.symbolPromiseX;
+
     private _result: T;
     private _continuations: [(x: T) => void, (e: any) => void][] = [];
 
@@ -43,11 +50,11 @@ export class PromiseX<T = any> implements PromiseLike<T> {
         }
     }
 
-    then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): PromiseLike<TResult1 | TResult2> {
+    then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): PromiseX<TResult1 | TResult2> {
         switch (this._state) {
             case State.Fulfilled: {
                 let r = onFulfilled ? onFulfilled(this._result) : undefined;
-                if (isPromiseLike(r)) {
+                if (isPromiseLike(r) && isPromiseX(r)) {
                     return r;
                 }
                 let p = new PromiseX<TResult1>();
@@ -58,7 +65,7 @@ export class PromiseX<T = any> implements PromiseLike<T> {
             case State.Rejected: {
                 if (onRejected) {
                     let r = onRejected(this._reason);
-                    if (isPromiseLike(r)) {
+                    if (isPromiseLike(r) && isPromiseX(r)) {
                         return r;
                     }
                     let p = new PromiseX<TResult2>();
@@ -99,7 +106,7 @@ export class PromiseX<T = any> implements PromiseLike<T> {
         }
     }
 
-    catch<TResult = never>(onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): PromiseLike<T | TResult> {
+    catch<TResult = never>(onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): PromiseX<T | TResult> {
         return this.then(undefined, onRejected);
     }
 }
