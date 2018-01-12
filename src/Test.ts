@@ -43,13 +43,13 @@ setTimeout(console.log, 1000, "xxxxxx");
 // p2.then(ComputeAsyncX).then(console.log);
 // p2.then(ComputeAsyncX).then(console.log);
 
-function delay(ms: number) : PromiseX
+function delay(ms: number) : PromiseX<string>
 {
-    return new PromiseX(resolve => setTimeout(resolve, ms));
+    return new PromiseX(resolve => setTimeout(resolve, ms, "fdafdafda"));
 }
 
 // https://github.com/Microsoft/TypeScript/pull/6631
-async function TestAsync() //: PromiseX
+async function TestAsync()
 {
     console.log("TestAsync: start");
     var s = await delay(1000);
