@@ -1,5 +1,5 @@
 function isPromiseLike<T>(x: any): x is PromiseLike<T> {
-    return x != null && 'then' in x;
+    return x != null && (<PromiseLike<T>>x).then != undefined;
 }
 
 enum State { Pending, Fulfilled, Rejected }
@@ -12,7 +12,7 @@ export class PromiseX<T = any> implements PromiseLike<T> {
 
     private _state: State = State.Pending;
 
-    constructor(executor: (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void) {
+    constructor(executor?: (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void) {
         if (executor) {
             executor(result => this.setResult(result), error => this.setError(error));
         }
@@ -50,7 +50,7 @@ export class PromiseX<T = any> implements PromiseLike<T> {
                 if (isPromiseLike(r)) {
                     return r;
                 }
-                let p = new PromiseX<TResult1>(undefined);
+                let p = new PromiseX<TResult1>();
                 p.setResult(r);
                 return p;
             }
@@ -60,13 +60,13 @@ export class PromiseX<T = any> implements PromiseLike<T> {
                 if (isPromiseLike(r)) {
                     return r;
                 }
-                let p = new PromiseX<TResult2>(undefined);
+                let p = new PromiseX<TResult2>();
                 p.setError(r);
                 return p;
             }
 
             case State.Pending: {
-                let p = new PromiseX<TResult1 | TResult2>(undefined);
+                let p = new PromiseX<TResult1 | TResult2>();
                 this._continuations.push([
                     result => {
                         let r = onFulfilled ? onFulfilled(result) : undefined;

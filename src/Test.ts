@@ -48,11 +48,12 @@ function delay(ms: number) : PromiseX
     return new PromiseX(resolve => setTimeout(resolve, ms));
 }
 
-async function TestAsync() : PromiseX
+// https://github.com/Microsoft/TypeScript/pull/6631
+async function TestAsync() //: PromiseX
 {
     console.log("TestAsync: start");
-    await delay(1000);
-    console.log("TestAsync: done");
+    var s = await delay(1000);
+    console.log("TestAsync: " + s);
 }
 
 TestAsync();
