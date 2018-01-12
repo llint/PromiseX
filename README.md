@@ -11,7 +11,7 @@ TypeScript based promise implementation; and, 'await' ready!
 
 ## Todo
 - error handling currently doesn't deal with exceptions; should 'try..catch' and setError for the caught exception, or propagate
-- have 'then' and 'catch' return 'PromiseX' rather than 'PromiseLike', so 'catch' can be used for chaining just like 'then' do!
+- have 'then' and 'catch' return 'PromiseX' rather than 'PromiseLike', so 'catch' can be used for chaining just like 'then' do! - DONE!
 
 ## References & Discussions
 - https://github.com/Microsoft/TypeScript/pull/6631 - async function return type restriction
