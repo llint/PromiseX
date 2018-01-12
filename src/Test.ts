@@ -12,43 +12,62 @@ function ComputeAsyncX(x: number) : PromiseLike<number> {
     return new PromiseX(resolve => setTimeout(resolve, 1000, x + 1));
 }
 
-ComputeAsyncX(0)
-    .then(console.log)
-    // .then(ComputeAsyncX) - very nicely, this is not allowed, since the previous then returns void
-    .then(() => ComputeAsyncX(10))
-    .then(r => { console.log(r); return ComputeAsyncX(r); })
-    // .then(r => { console.log(r); return ComputeAsyncX(r); })
-    .then(r => { console.log(r); return r + 1; })
+function Test() {
+    ComputeAsyncX(0)
+        .then(console.log)
+        // .then(ComputeAsyncX) - very nicely, this is not allowed, since the previous then returns void
+        .then(() => ComputeAsyncX(10))
+        .then(r => { console.log(r); return ComputeAsyncX(r); })
+        // .then(r => { console.log(r); return ComputeAsyncX(r); })
+        .then(r => { console.log(r); return r + 1; })
 
-    .then(r => { console.log(r); return ComputeAsyncX(r); })
-    .then(console.log)
-    // .then(ComputeAsyncX)
-    .then(() => ComputeAsyncX(20))
-    .then(console.log)
-    // .then(ComputeAsyncX)
-    .then(() => ComputeAsyncX(30))
-    .then(console.log)
-    .then(x => 233)
-    .then(console.log)
-    ;
+        .then(r => { console.log(r); return ComputeAsyncX(r); })
+        .then(console.log)
+        // .then(ComputeAsyncX)
+        .then(() => ComputeAsyncX(20))
+        .then(console.log)
+        // .then(ComputeAsyncX)
+        .then(() => ComputeAsyncX(30))
+        .then(console.log)
+        .then(x => 233)
+        .then(console.log)
+        ;
+}
+Test();
 
-var p = new PromiseX();
-p.setResult(42);
-p.then(console.log)
-    .then(v => "xyz")
-    .then(console.log)
-    .then(() => ComputeAsyncX(40))
-    .then(console.log)
-    .then(x => 999)
-    .then(console.log)
-    ;
+function Test2() {
+    let p = new PromiseX();
+    p.setResult(42);
+    p.then(console.log)
+        .then(v => "xyz")
+        .then(console.log)
+        .then(() => ComputeAsyncX(40))
+        .then(console.log)
+        .then(x => 999)
+        .then(console.log)
+        ;
+}
+Test2();
 
-var p2 = new PromiseX();
-p2.then(ComputeAsyncX).then(console.log);
-p2.then(ComputeAsyncX).then(console.log);
-p2.setResult(2000);
-p2.then(ComputeAsyncX).then(console.log);
-p2.then(ComputeAsyncX).then(console.log);
+function Test3() {
+    let p = new PromiseX();
+    p.then(ComputeAsyncX).then(console.log);
+    p.then(ComputeAsyncX).then(console.log);
+    p.setResult(2000);
+    p.then(ComputeAsyncX).then(console.log);
+    p.then(ComputeAsyncX).then(console.log);
+}
+Test3();
+
+function Test4() {
+    let p = new PromiseX();
+    // p.then(ComputeAsyncX).then(console.log, console.error);
+    // p.then(ComputeAsyncX).then(console.log).then(undefined, console.error);
+    p.setError("ERROR");
+    p.then(ComputeAsyncX).then(console.log, console.error);
+    p.then(ComputeAsyncX).then(console.log).then(undefined, console.error);
+}
+Test4();
 
 // NB: the return type could also be PromiseX, I'm using PromiseLike here for testing 'await' below
 // PromiseX would work the same
@@ -63,8 +82,12 @@ function delay(ms: number) : PromiseLike<string>
 async function TestAsync() // : PromiseX<void>
 {
     console.log("TestAsync: start");
-    var s = await delay(1000);
-    console.log("TestAsync: " + s);
+
+    console.log("TestAsync (1): " + await delay(1000));
+
+    console.log("TestAsync (2): " + await delay(1000));
+
+    console.log("TestAsync (3): " + await delay(1000));
 }
 
 TestAsync();
