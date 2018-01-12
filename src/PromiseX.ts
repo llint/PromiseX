@@ -98,4 +98,8 @@ export class PromiseX<T = any> implements PromiseLike<T> {
             }
         }
     }
+
+    catch<TResult = never>(onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): PromiseLike<T | TResult> {
+        return this.then(undefined, onRejected);
+    }
 }
