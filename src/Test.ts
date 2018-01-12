@@ -4,12 +4,8 @@ console.log("hello TypeScript!");
 
 setTimeout(console.log, 1000, "xxxxxx");
 
-// NB: the return type has to be PromiseLike instead of PromiseX,
-// because PromiseX doesn't seem to automatically resolve to PromiseLike when resolving 'then'
-// so the return value of PromiseX returning continuation will cause 'then' to return PromiseLike<PromiseX<T>>
-// instead of PromiseLike<T>
-function ComputeAsyncX(x: number) : PromiseLike<number> {
-    return new PromiseX(resolve => setTimeout(resolve, 1000, x + 1));
+function ComputeAsyncX(x: number) {
+    return new PromiseX<number>(resolve => setTimeout(resolve, 1000, x + 1));
 }
 
 function Test() {
@@ -69,11 +65,9 @@ function Test4() {
 }
 Test4();
 
-// NB: the return type could also be PromiseX, I'm using PromiseLike here for testing 'await' below
-// PromiseX would work the same
-function delay(ms: number) : PromiseLike<string>
+function delay(ms: number)
 {
-    return new PromiseX(resolve => setTimeout(resolve, ms, "fdafdafda"));
+    return new PromiseX<string>(resolve => setTimeout(resolve, ms, "fdafdafda"));
 }
 
 // When targeting es6 and up, it is not possible to explicitly specify a custom Promise type (e.g. PromiseX)
