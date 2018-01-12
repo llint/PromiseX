@@ -12,12 +12,13 @@ export class PromiseX<T = any> implements PromiseLike<T> {
     static symbolPromiseX: symbol = Symbol('PromiseX');
     readonly type: symbol = PromiseX.symbolPromiseX;
 
+    private _state: State = State.Pending;
+
     private _result: T;
-    private _continuations: [(x: T) => void, (e: any) => void][] = [];
 
     private _reason: any;
 
-    private _state: State = State.Pending;
+    private _continuations: [(x: T) => void, (e: any) => void][] = [];
 
     constructor(executor?: (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void) {
         if (executor) {
