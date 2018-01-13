@@ -27,12 +27,17 @@ export class PromiseX<T = any> implements PromiseLike<T> {
     }
 
     // if 'result' is 'undefined', it'll be passed along
+    // Note that there is a potential race if the current state is pending, while
+    // someone calls setResult on two different PromiseLike values - the first one
+    // gets either fulfilled or rejected would set the current promise in a non-pending state,
+    // and the second PromiseLike when eventually becomes non-pending would call either setResult or setError
+    // but find the state becomes non-pending, thus would have no effect!
     public setResult(result?: T | PromiseLike<T>): void {
         if (this._state == State.Pending) {
-            this._state = State.Fulfilled;
             if (isPromiseLike(result)) {
-                result.then(x => this.setResult(x));
+                result.then(x => this.setResult(x), e => this.setError(e));
             } else {
+                this._state = State.Fulfilled;
                 this._result = result;
                 for (let continuation of this._continuations) {
                     continuation[0](this._result);
@@ -54,7 +59,16 @@ export class PromiseX<T = any> implements PromiseLike<T> {
     then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): PromiseX<TResult1 | TResult2> {
         switch (this._state) {
             case State.Fulfilled: {
-                let r = onFulfilled ? onFulfilled(this._result) : undefined;
+                let r : TResult1 | PromiseLike<TResult1>;
+                if (onFulfilled) {
+                    try {
+                        r = onFulfilled(this._result);
+                    } catch (e) {
+                        let p = new PromiseX<never>();
+                        p.setError(e);
+                        return p;
+                    }
+                }
                 if (isPromiseLike(r) && isPromiseX(r)) {
                     return r;
                 }
@@ -65,7 +79,14 @@ export class PromiseX<T = any> implements PromiseLike<T> {
 
             case State.Rejected: {
                 if (onRejected) {
-                    let r = onRejected(this._reason);
+                    let r : TResult2 | PromiseLike<TResult2>;
+                    try {
+                        r = onRejected(this._reason);
+                    } catch (e) {
+                        let p = new PromiseX<never>();
+                        p.setError(e);
+                        return p;
+                    }
                     if (isPromiseLike(r) && isPromiseX(r)) {
                         return r;
                     }
@@ -82,23 +103,29 @@ export class PromiseX<T = any> implements PromiseLike<T> {
                 let p = new PromiseX<TResult1 | TResult2>();
                 this._continuations.push([
                     result => {
-                        let r = onFulfilled ? onFulfilled(result) : undefined;
-                        if (isPromiseLike(r)) {
-                            r.then(x => p.setResult(x));
-                        } else {
-                            p.setResult(r);
+                        let r : TResult1 | PromiseLike<TResult1>;
+                        if (onFulfilled) {
+                            try {
+                                r = onFulfilled(result);
+                            } catch (e) {
+                                p.setError(e);
+                                return;
+                            }
                         }
+                        p.setResult(r);
                     },
                     reason => {
                         if (onRejected) {
-                            let r = onRejected(reason);
-                            if (isPromiseLike(r)) {
-                                r.then(x => p.setResult(x)); // NB: since the error is handled, the result from the error handler is passed along
-                            } else {
-                                p.setResult(r); // NB: the error is handled, so the promised returned would be signaled with whatever result from the error handler
+                            let r : TResult2 | PromiseLike<TResult2>;
+                            try {
+                                r = onRejected(reason);
+                            } catch (e) {
+                                p.setError(e);
+                                return;
                             }
+                            p.setResult(r);
                         } else {
-                            p.setError(reason); // NB: pass the error along the chain
+                            p.setError(reason); // NB: error not handled, pass the error along the chain
                         }
                     }
                 ]);

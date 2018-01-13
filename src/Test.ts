@@ -65,6 +65,16 @@ function Test4() {
 }
 Test4();
 
+function Test5() {
+    let p = new PromiseX();
+    p.then(x => {throw x;}).catch(console.error).then(_ => ComputeAsyncX(100)).then(console.log);
+    let p0 = new PromiseX(resolve => setTimeout(resolve, 10000, "THROW ME (A)!!!"));
+    let p1 = new PromiseX(resolve => setTimeout(resolve, 11000, "THROW ME (B)!!!"));
+    p.setResult(p0);
+    p.setResult(p1);
+}
+Test5();
+
 function delay(ms: number)
 {
     return new PromiseX<string>(resolve => setTimeout(resolve, ms, "fdafdafda"));
