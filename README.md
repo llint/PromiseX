@@ -10,7 +10,7 @@ TypeScript based promise implementation; and, 'await' ready!
 ## Design
 
 ## Todo
-- error handling currently doesn't deal with exceptions; should 'try..catch' and setError for the caught exception, or propagate
+- error handling currently doesn't deal with exceptions; should 'try..catch' and setError for the caught exception, or propagate - DONE!
 - have 'then' and 'catch' return 'PromiseX' rather than 'PromiseLike', so 'catch' can be used for chaining just like 'then' do! - DONE!
 
 ## References & Discussions
